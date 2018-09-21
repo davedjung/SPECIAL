@@ -75,6 +75,51 @@ public class Main {
     }
     
     public static String infixToPrefixConverter(String input){
+        String prefix = "";
+        String postfix[];
+        String infix[];
+        int operatorIndex[];
+        int indexInf = -1;
+        int indexPos = -1;
+        int indexOp = -1;
+        int length = input.length();
+        int operatorCount = 0;
+        
+        for (int i=0; i<length; i++){
+            if (isOperator(input.charAt(i))){
+                operatorCount++;
+            }
+        }
+        
+        infix = new String[operatorCount*2];
+        postfix = new String[operatorCount*2];
+        operatorIndex = new int[operatorCount];
+        
+        for (int j=0; j<length; j++){
+            if (isOperator(input.charAt(j))){
+                operatorIndex[++indexOp] = j;
+            }
+        }
+        
+        indexOp = 0;
+        
+        if (operatorIndex[0]!=0){
+            infix[++indexInf] = input.substring(0,operatorIndex[indexOp++]);
+        }
+        
+        while (indexOp < operatorCount){
+            infix[++indexInf] = input.substring(operatorIndex[indexOp-1], operatorIndex[indexOp]);
+            
+        }
+        
+        
+        return prefix;
+        
+        
+        
+        
+        
+        /*
             String output = "";
             String current = "";
             int operatorIndex[];
@@ -89,15 +134,16 @@ public class Main {
                 }
             }
             
-            operatorIndex = new int[size];
+            operatorIndex = new int[size+1];
             for (int i=0; i<input.length(); i++){
                 if (isOperator(input.charAt(i))){
                     operatorIndex[++arrayIndex] = i;
                 }
             }
+            operatorIndex[++arrayIndex] = input.length();
             arrayIndex = 0;
             
-            while(!input.equals("")){
+            while(operatorIndex[arrayIndex]!=input.length()){
                 current = input.substring(index, operatorIndex[arrayIndex]);
                 if (!isOperator(current)){
                     output = output + current;
@@ -123,6 +169,7 @@ public class Main {
                 output = output + stack.pop();
             }
             return output;
+        */
     }
     
     public static boolean isOperator(char input){
@@ -165,7 +212,8 @@ public class Main {
         } else if (input.equals("(") || input.equals(")")){
             return 4;
         } else {
-            return 0;
+            //in case of empty input
+            return 5;
         }
     }
 }
