@@ -70,16 +70,57 @@ public class Main {
         System.out.println("Stack class debugging complete.");
         System.out.println();
         
-        System.out.println(isOperator('3'));
-        System.out.println(isOperator('+'));
+        System.out.println("Debugging infixToPreficConverter...");
+        System.out.println(infixToPrefixConverter(scan.nextLine()));
     }
     
     public static String infixToPrefixConverter(String input){
             String output = "";
             String current = "";
+            int operatorIndex[];
+            int arrayIndex = -1;
+            int size = 0;
+            int index= 0;
+            Stack stack = new Stack(input.length());
+            
+            for (int i=0; i<input.length(); i++){
+                if (isOperator(input.charAt(i))){
+                    size ++;
+                }
+            }
+            
+            operatorIndex = new int[size];
+            for (int i=0; i<input.length(); i++){
+                if (isOperator(input.charAt(i))){
+                    operatorIndex[++arrayIndex] = i;
+                }
+            }
+            arrayIndex = 0;
+            
             while(!input.equals("")){
-                current = input.substring(0,1);
-                
+                current = input.substring(index, operatorIndex[arrayIndex]);
+                if (!isOperator(current)){
+                    output = output + current;
+                } else {
+                    if(current.equals("(")){
+                        stack.push("(");
+                    } else if (current.equals(")")){
+                        while (!stack.lastItem().equals("(")){
+                            output = output + stack.pop();
+                        }
+                        stack.pop();
+                    } else {
+                        while (priority(current) > priority(stack.lastItem())){
+                            output = output + stack.pop();
+                        }
+                        stack.push(current);
+                    }
+                            
+                }
+                index = operatorIndex[arrayIndex++];
+            }
+            while (!stack.isEmpty()){
+                output = output + stack.pop();
             }
             return output;
     }
@@ -99,4 +140,32 @@ public class Main {
         }
     }
     
+    public static boolean isOperator(String input){
+        /*
+        if (input.equals("+") || input.equals("-") || input.equals("*") || input.equals("/") || input.equals("(") || input.equals(")") || input.equals("^")){
+            return true;
+        } else {
+            return false;
+        }
+        */
+        if (input.charAt(0) >= 48 && input.charAt(0) <= 57){
+            return false;
+        } else {
+            return true;
+        }
+    }
+    
+    public static int priority(String input){
+        if (input.equals("+") || input.equals("-")){
+            return 1;
+        } else if (input.equals("*") || input.equals("-")){
+            return 2;
+        } else if (input.equals("^")){
+            return 3;
+        } else if (input.equals("(") || input.equals(")")){
+            return 4;
+        } else {
+            return 0;
+        }
+    }
 }
