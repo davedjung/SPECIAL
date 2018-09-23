@@ -78,46 +78,77 @@ public class Main {
         String prefix = "";
         String postfix[];
         String infix[];
+        String infix_reversed[];
         int indexPo = -1;
         int indexIn = -1;
         Stack stack;
         
         //Demo
-        final int size = 7;
+        final int size = 13;
         postfix = new String[size];
         infix = new String[size];
+        infix_reversed = new String[size + 1];
         stack = new Stack(size);
-        infix[0] = "(";
-        infix[1] = "5";
-        infix[2] = "-";
-        infix[3] = "2";
-        infix[4] = ")";
-        infix[5] = "^";
-        infix[6] = "2";
-                
+        infix[0] = "4";
+        infix[1] = "-";
+        infix[2] = "49";
+        infix[3] = "^";
+        infix[4] = "(";
+        infix[5] = "(";
+        infix[6] = "4";
+        infix[7] = "-";
+        infix[8] = "3";
+        infix[9] = ")";
+        infix[10] = "*";
+        infix[11] = "3";
+        infix[12] = ")";
         
-        for (indexIn = 0; indexIn < infix.length; indexIn++){
-            if (!isOperator(infix[indexIn])){
-                postfix[++indexPo] = infix[indexIn];
-            } else if (infix[indexIn].equals("(")) {
+        //Reversing infix expression for conversion
+        for (int i = 0; i < infix.length; i++){
+            if (infix[infix.length - 1 - i].equals("(")){
+                infix_reversed[i] = ")";
+            } else if (infix[infix.length - 1 - i].equals(")")){
+                infix_reversed[i] = "(";
+            } else {
+                infix_reversed[i] = infix[infix.length - 1 - i];
+            }
+        }
+        
+        //Step 1: Add ")" to the end of the reversed infix expression
+        infix_reversed[infix_reversed.length - 1] = ")";
+        
+        //Step 2: Push "(" onto the stack
+        stack.push("(");
+        
+        //Step 3: Process each element until the expression is scanned to the end
+        for (int j = 0; j < infix_reversed.length; j++){
+            if (!isOperator(infix_reversed[j])){
+                postfix[++indexPo] = infix_reversed[j];
+            } else if (infix_reversed[j].equals("(")){
                 stack.push("(");
-            } else if (infix[indexIn].equals(")")){
+            } else if (infix_reversed[j].equals(")")){
                 while (!stack.lastItem().equals("(")){
                     postfix[++indexPo] = stack.pop();
                 }
                 stack.pop();
             } else {
-                while (stack.lastItem()!=null && priority(infix[indexIn]) > priority(stack.lastItem())){
+                while (priority(infix_reversed[j]) <= priority(stack.lastItem())){
                     postfix[++indexPo] = stack.pop();
                 }
-                stack.push(infix[indexIn]);
-            }    
+                stack.push(infix_reversed[j]);
+            }
         }
+        
+        //Step 4: Pop from the stack until the stack is empty
         while (stack.lastItem()!=null){
             postfix[++indexPo] = stack.pop();
         }
+        
+        //Step 5: Reverse the postfix expression to obtain prefix expression
         for (int j=postfix.length-1; j>-1; j--){
-            prefix = prefix + postfix[j];
+            if (postfix[j]!=null){
+                prefix = prefix + postfix[j];
+            }
         }
         
         return prefix;
@@ -195,6 +226,7 @@ public class Main {
     }
     
     public static boolean isOperator(String input){
+        //Comprehensive version for expressions with variables (characters)
         /*
         if (input.equals("+") || input.equals("-") || input.equals("*") || input.equals("/") || input.equals("(") || input.equals(")") || input.equals("^")){
             return true;
@@ -202,6 +234,8 @@ public class Main {
             return false;
         }
         */
+        
+        //Simplified version for expressions without variables (characters)
         if (input.charAt(0) >= 48 && input.charAt(0) <= 57){
             return false;
         } else {
@@ -217,7 +251,7 @@ public class Main {
         } else if (input.equals("^")){
             return 3;
         } else if (input.equals("(") || input.equals(")")){
-            return 4;
+            return 0;
         } else {
             //in case of empty input
             return 5;
