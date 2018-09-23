@@ -10,79 +10,24 @@ public class Main {
         
         System.out.println("Mathematical Expression Processor version 0.1");
         System.out.println();
+                
+        System.out.println("Enter infix expression : ");        
+        //double result = evaluate(infixToPrefixConverter(expressionParser(scan.nextLine())));
+        //Expression above is equivalent to the following lines of code
         
-        //Testing procedure for Stack class
-        /*
-        System.out.println("Debugging Stack class...");
-        Stack stack = new Stack(100);
-        System.out.println("Testing push...");
-        stack.push("This");
-        stack.push("is");
-        stack.push("a");
-        stack.push("testing");
-        stack.push("procedure");
-        System.out.print("Testing toString : " + stack.toString());
-        System.out.println(" (Desired output : This is a testing procedure)");
-        System.out.print("Testing pop : " + stack.pop());
-        System.out.println(" (Desired output : procedure)");
-        System.out.print("Tesing lastItem : " + stack.lastItem());
-        System.out.println(" (Desired output : testing)");
-        System.out.print("Testing isEmpty : " + stack.isEmpty());
-        System.out.println(" (Desired output : false)");
-        System.out.print("Tesing currentSize : " + stack.currentSize());
-        System.out.println(" (Desired output : 4)");
-        System.out.println("Testing boundary condition... ");
-        while (!stack.isEmpty()){
-            stack.pop();
-        }
-        System.out.print("Current stack status : " + stack.toString());
-        System.out.println(" (Desired output : null)");
-        System.out.print("Testing isEmpty : " + stack.isEmpty());
-        System.out.println(" (Desired output : true)");
-        System.out.println("Enter testing input : ");
-        String testingInput = scan.nextLine();
-        String temp = testingInput + " ";
-        stack = new Stack(temp.length());
-        System.out.println("Parsing by space...");
-        //Remove all spaces at the beginning of the String
-        while(temp.indexOf(" ")==0){
-            temp = temp.substring(1);
-        }
-        //Push all substrings ending with space into the stack
-        outerloop:
-        while (temp.contains(" ")){
-            //Remove repeated spaces
-            while (temp.charAt(0)==' '){
-                if (temp.length()>1){
-                   temp = temp.substring(1);
-                } else {
-                    temp = "";  
-                    break outerloop;
-                }
-            }   
-            stack.push(temp.substring(0, temp.indexOf(" ")));
-            temp = temp.substring(temp.indexOf(" ")+1);
-        }
-        if (!temp.equals("")){
-            stack.push(temp);
-        }
-        System.out.println("Stack content : " + stack.toString());
-        System.out.println("Stack size : " + stack.currentSize());
-        System.out.println("Stack class debugging complete.");
-        System.out.println();
-        */
-        
-        System.out.println("Enter infix expression : ");
         String rawInput = scan.nextLine();
         String[] parsedInput = expressionParser(rawInput);
         String[] prefixExpression = infixToPrefixConverter(parsedInput);
         double result = evaluate(prefixExpression);
-        System.out.println("Result is : " + result);
         
+        System.out.println("Result is : " + result);
+        //Binary tree conversion and evaluation are to be implemented
+        /*
         BinaryTree tree = new BinaryTree();
         convertToTree(prefixExpression, tree);
         result = traverse(tree);
         System.out.println("Result is : " + result);
+        */
     }
     
     public static String[] expressionParser(String rawInput){
@@ -230,14 +175,12 @@ public class Main {
     
     public static boolean isOperator(String input){
         //Comprehensive version for expressions with variables (characters)
-        
         if (input.equals("+") || input.equals("-") || input.equals("*") || input.equals("/") || input.equals("(") || input.equals(")") || input.equals("^")){
             return true;
         } else {
             return false;
         }
-        
-        
+               
         //Simplified version for expressions without variables (characters)
         /*
         if (input.charAt(0) >= 48 && input.charAt(0) <= 57){
@@ -256,9 +199,10 @@ public class Main {
         } else if (input.equals("^")){
             return 3;
         } else if (input.equals("(") || input.equals(")")){
+            //priority of parentheses are set to 0 due to infix-postfix conversion algorithm
             return 0;
         } else {
-            //in case of empty input
+            //in case of empty input. Also due to infix-postfix conversion algorithm
             return 5;
         }
     }
@@ -272,26 +216,30 @@ public class Main {
             if (!isOperator(prefixExpression[i])){
                 stack.push(prefixExpression[i]);
             } else {
-                if (prefixExpression[i].equals("+")){
-                    operandB = Double.parseDouble(stack.pop());
-                    operandA = Double.parseDouble(stack.pop());
-                    stack.push(Double.toString(operandA + operandB));
-                } else if (prefixExpression[i].equals("-")){
-                    operandB = Double.parseDouble(stack.pop());
-                    operandA = Double.parseDouble(stack.pop());
-                    stack.push(Double.toString(operandA - operandB));
-                } else if (prefixExpression[i].equals("*")){
-                    operandB = Double.parseDouble(stack.pop());
-                    operandA = Double.parseDouble(stack.pop());
-                    stack.push(Double.toString(operandA * operandB));
-                } else if (prefixExpression.equals("/")){
-                   operandB = Double.parseDouble(stack.pop());
-                    operandA = Double.parseDouble(stack.pop());
-                    stack.push(Double.toString(operandA / operandB));
-                } else if (prefixExpression[i].equals("^")){
-                    operandB = Double.parseDouble(stack.pop());
-                    operandA = Double.parseDouble(stack.pop());
-                    stack.push(Double.toString(Math.pow(operandA, operandB)));
+                switch (prefixExpression[i]) {
+                    case "+":
+                        stack.push(Double.toString(Double.parseDouble(stack.pop()) + Double.parseDouble(stack.pop())));
+                        //Expression above is equivalent to the following lines of code
+                        /*
+                        operandA = Double.parseDouble(stack.pop());
+                        operandB = Double.parseDouble(stack.pop());
+                        stack.push(Double.toString(operandA + operandB));
+                        */
+                        break;
+                    case "-":
+                        stack.push(Double.toString(Double.parseDouble(stack.pop()) - Double.parseDouble(stack.pop())));
+                        break;
+                    case "*":
+                        stack.push(Double.toString(Double.parseDouble(stack.pop()) * Double.parseDouble(stack.pop())));
+                        break;
+                    case "/":
+                        stack.push(Double.toString(Double.parseDouble(stack.pop()) / Double.parseDouble(stack.pop())));
+                        break;
+                    case "^":
+                        stack.push(Double.toString(Math.pow(Double.parseDouble(stack.pop()), Double.parseDouble(stack.pop()))));
+                        break;
+                    default:
+                        break;
                 }
             }
         }
