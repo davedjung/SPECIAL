@@ -78,40 +78,47 @@ public class Main {
         String prefix = "";
         String postfix[];
         String infix[];
-        int operatorIndex[];
-        int indexInf = -1;
-        int indexPos = -1;
-        int indexOp = -1;
-        int length = input.length();
-        int operatorCount = 0;
+        int indexPo = -1;
+        int indexIn = -1;
+        Stack stack;
         
-        for (int i=0; i<length; i++){
-            if (isOperator(input.charAt(i))){
-                operatorCount++;
-            }
+        //Demo
+        final int size = 7;
+        postfix = new String[size];
+        infix = new String[size];
+        stack = new Stack(size);
+        infix[0] = "(";
+        infix[1] = "5";
+        infix[2] = "-";
+        infix[3] = "2";
+        infix[4] = ")";
+        infix[5] = "^";
+        infix[6] = "2";
+                
+        
+        for (indexIn = 0; indexIn < infix.length; indexIn++){
+            if (!isOperator(infix[indexIn])){
+                postfix[++indexPo] = infix[indexIn];
+            } else if (infix[indexIn].equals("(")) {
+                stack.push("(");
+            } else if (infix[indexIn].equals(")")){
+                while (!stack.lastItem().equals("(")){
+                    postfix[++indexPo] = stack.pop();
+                }
+                stack.pop();
+            } else {
+                while (stack.lastItem()!=null && priority(infix[indexIn]) > priority(stack.lastItem())){
+                    postfix[++indexPo] = stack.pop();
+                }
+                stack.push(infix[indexIn]);
+            }    
         }
-        
-        infix = new String[operatorCount*2];
-        postfix = new String[operatorCount*2];
-        operatorIndex = new int[operatorCount];
-        
-        for (int j=0; j<length; j++){
-            if (isOperator(input.charAt(j))){
-                operatorIndex[++indexOp] = j;
-            }
+        while (stack.lastItem()!=null){
+            postfix[++indexPo] = stack.pop();
         }
-        
-        indexOp = 0;
-        
-        if (operatorIndex[0]!=0){
-            infix[++indexInf] = input.substring(0,operatorIndex[indexOp++]);
+        for (int j=postfix.length-1; j>-1; j--){
+            prefix = prefix + postfix[j];
         }
-        
-        while (indexOp < operatorCount){
-            infix[++indexInf] = input.substring(operatorIndex[indexOp-1], operatorIndex[indexOp]);
-            
-        }
-        
         
         return prefix;
         
