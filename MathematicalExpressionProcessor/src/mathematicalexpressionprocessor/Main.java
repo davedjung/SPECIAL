@@ -11,6 +11,8 @@ public class Main {
         System.out.println("Mathematical Expression Processor version 0.1");
         System.out.println();
         
+        //Testing procedure for Stack class
+        /*
         System.out.println("Debugging Stack class...");
         Stack stack = new Stack(100);
         System.out.println("Testing push...");
@@ -41,13 +43,12 @@ public class Main {
         String testingInput = scan.nextLine();
         String temp = testingInput + " ";
         stack = new Stack(temp.length());
-        System.out.println("Checking input...");
         System.out.println("Parsing by space...");
         //Remove all spaces at the beginning of the String
         while(temp.indexOf(" ")==0){
             temp = temp.substring(1);
         }
-        //Push all substrings ending with space
+        //Push all substrings ending with space into the stack
         outerloop:
         while (temp.contains(" ")){
             //Remove repeated spaces
@@ -69,39 +70,92 @@ public class Main {
         System.out.println("Stack size : " + stack.currentSize());
         System.out.println("Stack class debugging complete.");
         System.out.println();
+        */
         
-        System.out.println("Debugging infixToPreficConverter...");
-        System.out.println(infixToPrefixConverter(scan.nextLine()));
+        System.out.println("Enter infix expression : ");
+        String rawInput = scan.nextLine();
+        String[] parsedInput = expressionParser(rawInput);
+        String[] prefixExpression = infixToPrefixConverter(parsedInput);
+        double result = evaluate(prefixExpression);
+        System.out.println("Result is : " + result);
+        
+        BinaryTree tree = convertToTree(prefixExpression);
+        result = traverse(tree);
+        System.out.println("Result is : " + result);
     }
     
-    public static String infixToPrefixConverter(String input){
-        String prefix = "";
-        String postfix[];
+    public static String[] expressionParser(String rawInput){
         String infix[];
+        int size = 0;
+        boolean prev_isOperator = true;
+        
+        //Determine the size of the expression (# of operators and operands)
+        for (int i = 0; i < rawInput.length(); i++){
+            if (isOperator(rawInput.charAt(i))){
+                if (!prev_isOperator){
+                    size += 2;
+                } else {
+                    size += 1;                    
+                }
+                prev_isOperator = true;
+            } else {
+                if (prev_isOperator){
+                    prev_isOperator = false;
+                }
+            }
+        }
+        if (!prev_isOperator){
+            size += 1;
+        }
+        
+        //Initialize infix array according to the size
+        infix = new String[size];
+        int indexInfix = -1;
+        int lastOperatorIndex = -1;
+        prev_isOperator = true;
+        
+        //parse the expression
+        for (int j = 0; j < rawInput.length(); j++){
+            if (isOperator(rawInput.charAt(j))){
+                if (!prev_isOperator){
+                    infix[++indexInfix] = rawInput.substring(lastOperatorIndex + 1, j);
+                }
+                infix[++indexInfix] = rawInput.substring(j, j+1);
+                prev_isOperator = true;
+                lastOperatorIndex = j;
+            } else {
+                if (prev_isOperator){
+                    prev_isOperator = false;
+                }
+            }
+        }
+        if (!prev_isOperator){
+            infix[++indexInfix] = rawInput.substring(lastOperatorIndex + 1);
+        }
+        
+        return infix; 
+    }
+    
+    public static String[] infixToPrefixConverter(String[] parsedInput){
+        String prefix[];
+        String postfix[];
+        String infix[] = parsedInput;
         String infix_reversed[];
         int indexPo = -1;
-        int indexIn = -1;
+        int size = infix.length;
+        int effectiveSize = 0;
         Stack stack;
         
-        //Demo
-        final int size = 13;
-        postfix = new String[size];
-        infix = new String[size];
+        for (int i = 0; i < infix.length; i++){
+            if (!infix[i].equals("(") && !infix[i].equals(")")){
+                effectiveSize++;
+            }
+        }
+        
+        postfix = new String[effectiveSize];
+        prefix = new String[effectiveSize];
         infix_reversed = new String[size + 1];
         stack = new Stack(size);
-        infix[0] = "4";
-        infix[1] = "-";
-        infix[2] = "49";
-        infix[3] = "^";
-        infix[4] = "(";
-        infix[5] = "(";
-        infix[6] = "4";
-        infix[7] = "-";
-        infix[8] = "3";
-        infix[9] = ")";
-        infix[10] = "*";
-        infix[11] = "3";
-        infix[12] = ")";
         
         //Reversing infix expression for conversion
         for (int i = 0; i < infix.length; i++){
@@ -147,66 +201,15 @@ public class Main {
         //Step 5: Reverse the postfix expression to obtain prefix expression
         for (int j=postfix.length-1; j>-1; j--){
             if (postfix[j]!=null){
-                prefix = prefix + postfix[j];
+                prefix[postfix.length - 1 -  j] = postfix[j];
             }
         }
         
-        return prefix;
-        
-        /*
-            String output = "";
-            String current = "";
-            int operatorIndex[];
-            int arrayIndex = -1;
-            int size = 0;
-            int index= 0;
-            Stack stack = new Stack(input.length());
-            
-            for (int i=0; i<input.length(); i++){
-                if (isOperator(input.charAt(i))){
-                    size ++;
-                }
-            }
-            
-            operatorIndex = new int[size+1];
-            for (int i=0; i<input.length(); i++){
-                if (isOperator(input.charAt(i))){
-                    operatorIndex[++arrayIndex] = i;
-                }
-            }
-            operatorIndex[++arrayIndex] = input.length();
-            arrayIndex = 0;
-            
-            while(operatorIndex[arrayIndex]!=input.length()){
-                current = input.substring(index, operatorIndex[arrayIndex]);
-                if (!isOperator(current)){
-                    output = output + current;
-                } else {
-                    if(current.equals("(")){
-                        stack.push("(");
-                    } else if (current.equals(")")){
-                        while (!stack.lastItem().equals("(")){
-                            output = output + stack.pop();
-                        }
-                        stack.pop();
-                    } else {
-                        while (priority(current) > priority(stack.lastItem())){
-                            output = output + stack.pop();
-                        }
-                        stack.push(current);
-                    }
-                            
-                }
-                index = operatorIndex[arrayIndex++];
-            }
-            while (!stack.isEmpty()){
-                output = output + stack.pop();
-            }
-            return output;
-        */
+        return prefix;       
     }
     
     public static boolean isOperator(char input){
+        //Comprehensive version for expressions with variables (characters)
         /*
         if (input.equals("+") || input.equals("-") || input.equals("*") || input.equals("/") || input.equals("(") || input.equals(")") || input.equals("^")){
             return true;
@@ -214,6 +217,8 @@ public class Main {
             return false;
         }
         */
+        
+        //Simplified version for expressions without variables (characters)
         if (input >= 48 && input <= 57){
             return false;
         } else {
