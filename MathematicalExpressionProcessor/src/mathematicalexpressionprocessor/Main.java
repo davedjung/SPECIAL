@@ -210,38 +210,42 @@ public class Main {
     
     public static boolean isOperator(char input){
         //Comprehensive version for expressions with variables (characters)
-        /*
-        if (input.equals("+") || input.equals("-") || input.equals("*") || input.equals("/") || input.equals("(") || input.equals(")") || input.equals("^")){
+        
+        if (input == '+' || input == '-' || input == '*' || input == '/' || input == '(' || input == ')' || input == '^'){
             return true;
         } else {
             return false;
         }
-        */
+        
         
         //Simplified version for expressions without variables (characters)
+        /*
         if (input >= 48 && input <= 57){
             return false;
         } else {
             return true;
         }
+        */
     }
     
     public static boolean isOperator(String input){
         //Comprehensive version for expressions with variables (characters)
-        /*
+        
         if (input.equals("+") || input.equals("-") || input.equals("*") || input.equals("/") || input.equals("(") || input.equals(")") || input.equals("^")){
             return true;
         } else {
             return false;
         }
-        */
+        
         
         //Simplified version for expressions without variables (characters)
+        /*
         if (input.charAt(0) >= 48 && input.charAt(0) <= 57){
             return false;
         } else {
             return true;
         }
+        */
     }
     
     public static int priority(String input){
@@ -257,5 +261,41 @@ public class Main {
             //in case of empty input
             return 5;
         }
+    }
+    
+    public static double evaluate(String[] prefixExpression){
+        double result = 0;
+        double operandA = 0;
+        double operandB = 0;
+        Stack stack = new Stack(prefixExpression.length);
+        for (int i = prefixExpression.length - 1; i > -1; i--){
+            if (!isOperator(prefixExpression[i])){
+                stack.push(prefixExpression[i]);
+            } else {
+                if (prefixExpression[i].equals("+")){
+                    operandB = Double.parseDouble(stack.pop());
+                    operandA = Double.parseDouble(stack.pop());
+                    stack.push(Double.toString(operandA + operandB));
+                } else if (prefixExpression[i].equals("-")){
+                    operandB = Double.parseDouble(stack.pop());
+                    operandA = Double.parseDouble(stack.pop());
+                    stack.push(Double.toString(operandA - operandB));
+                } else if (prefixExpression[i].equals("*")){
+                    operandB = Double.parseDouble(stack.pop());
+                    operandA = Double.parseDouble(stack.pop());
+                    stack.push(Double.toString(operandA * operandB));
+                } else if (prefixExpression.equals("/")){
+                   operandB = Double.parseDouble(stack.pop());
+                    operandA = Double.parseDouble(stack.pop());
+                    stack.push(Double.toString(operandA / operandB));
+                } else if (prefixExpression[i].equals("^")){
+                    operandB = Double.parseDouble(stack.pop());
+                    operandA = Double.parseDouble(stack.pop());
+                    stack.push(Double.toString(Math.pow(operandA, operandB)));
+                }
+            }
+        }
+        result = Double.parseDouble(stack.pop());
+        return result;
     }
 }
