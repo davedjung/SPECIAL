@@ -79,7 +79,8 @@ public class Main {
         double result = evaluate(prefixExpression);
         System.out.println("Result is : " + result);
         
-        BinaryTree tree = convertToTree(prefixExpression);
+        BinaryTree tree = new BinaryTree();
+        convertToTree(prefixExpression, tree);
         result = traverse(tree);
         System.out.println("Result is : " + result);
     }
@@ -210,7 +211,6 @@ public class Main {
     
     public static boolean isOperator(char input){
         //Comprehensive version for expressions with variables (characters)
-        
         if (input == '+' || input == '-' || input == '*' || input == '/' || input == '(' || input == ')' || input == '^'){
             return true;
         } else {
@@ -296,6 +296,16 @@ public class Main {
             }
         }
         result = Double.parseDouble(stack.pop());
+        return result;
+    }
+    
+    public static void convertToTree(String[] prefixExpression, BinaryTree tree){
+        //Implementation
+    }
+    
+    public static double traverse(BinaryTree tree){
+        double result = 0;
+        //Implementation
         return result;
     }
 }
