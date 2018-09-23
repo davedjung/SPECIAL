@@ -132,7 +132,7 @@ public class Main {
                 }
                 stack.pop();
             } else {
-                while (priority(infix_reversed[j]) <= priority(stack.lastItem())){
+                while (priority(infix_reversed[j]) < priority(stack.lastItem())){
                     postfix[++indexPo] = stack.pop();
                 }
                 stack.push(infix_reversed[j]);
