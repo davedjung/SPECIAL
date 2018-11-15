@@ -8,78 +8,211 @@ public class Main {
                 
         Scanner scan = new Scanner(System.in);
         
-        System.out.println("Mathematical Expression Processor version 0.1");
+        System.out.println("Mathematical Expression Processor version 0.2");
         System.out.println();
                 
         System.out.println("Enter infix expression : ");        
-        //double result = evaluate(infixToPrefixConverter(expressionParser(scan.nextLine())));
-        //Expression above is equivalent to the following lines of code
         
-        String rawInput = scan.nextLine();
-        String[] parsedInput = expressionParser(rawInput);
+        String input = scan.nextLine();
+        String[] parsedInput = expressionParser(input);
         String[] prefixExpression = infixToPrefixConverter(parsedInput);
         double result = evaluate(prefixExpression);
         
         System.out.println("Result is : " + result);
-        //Binary tree conversion and evaluation are to be implemented
-        /*
-        BinaryTree tree = new BinaryTree();
-        convertToTree(prefixExpression, tree);
-        result = traverse(tree);
-        System.out.println("Result is : " + result);
-        */
     }
     
-    public static String[] expressionParser(String rawInput){
-        String infix[];
-        int size = 0;
-        boolean prev_isOperator = true;
+    public static String[] expressionParser(String input){
         
-        //Determine the size of the expression (# of operators and operands)
-        for (int i = 0; i < rawInput.length(); i++){
-            if (isOperator(rawInput.charAt(i))){
-                if (!prev_isOperator){
-                    size += 2;
-                } else {
-                    size += 1;                    
+        int arraySize = input.length()*2+1;
+        String[] expression = new String[arraySize];
+        
+        //Use \\ to parse the expression
+        //@ indicates "can be ignored"
+        for (int i=0; i<=input.length()*2; i+=2){
+            expression[i] = "\\";
+        }
+        for (int j=0; j<input.length(); j++){
+            expression[j*2+1] = input.substring(j,j+1);
+        }
+        
+        for (int k=1; k<arraySize-1; k++){
+            //Remove blank spaces
+            if (expression[k-1].equals(" ")){
+                expression[k-1] = "@";
+                expression[k] = "@";
+            }
+            //Bring together numbers
+            if (isNumber(expression[k-1]) && isNumber(expression[k+1])){
+                expression[k] = "@";
+            }
+            //Dealing with unary negation "-"
+            if (!isNumber(expression[k-1]) && expression[k+1].equals("-")){
+                expression[k+2] = "@";
+            }            
+            //Identifying exp()
+            if (expression[k-1].equals("e") && expression[k+1].equals("x")){
+                if (k+3 < arraySize){
+                    if (expression[k+3].equals("p")){
+                        expression[k+1] = "^";
+                        expression[k+2] = "@";
+                        expression[k+3] = "@";
+                    }
                 }
-                prev_isOperator = true;
-            } else {
-                if (prev_isOperator){
-                    prev_isOperator = false;
+            }
+            //Identifying sin()
+            if (expression[k-1].equals("s") && expression[k+1].equals("i")){
+                if (k+3 < arraySize){
+                    if (expression[k+3].equals("n")){
+                        expression[k] = "@";
+                        expression[k+2] = "@";
+                    }
+                }
+            }
+            //Identifying cos()
+            if (expression[k-1].equals("c") && expression[k+1].equals("o")){
+                if (k+3 < arraySize){
+                    if (expression[k+3].equals("s")){
+                        expression[k] = "@";
+                        expression[k+2] = "@";
+                    }
+                }
+            }
+            //Identifying tan()
+            if (expression[k-1].equals("t") && expression[k+1].equals("a")){
+                if (k+3 < arraySize){
+                    if (expression[k+3].equals("n")){
+                        expression[k] = "@";
+                        expression[k+2] = "@";
+                    }
+                }
+            }
+            //Identifying csc()
+            if (expression[k-1].equals("c") && expression[k+1].equals("s")){
+                if (k+3 < arraySize){
+                    if (expression[k+3].equals("c")){
+                        expression[k] = "@";
+                        expression[k+2] = "@";
+                    }
+                }
+            }
+            //Identifying sec()
+            if (expression[k-1].equals("s") && expression[k+1].equals("e")){
+                if (k+3 < arraySize){
+                    if (expression[k+3].equals("c")){
+                        expression[k] = "@";
+                        expression[k+2] = "@";
+                    }
+                }
+            }
+            //Identifying cot()
+            if (expression[k-1].equals("c") && expression[k+1].equals("o")){
+                if (k+3 < arraySize){
+                    if (expression[k+3].equals("t")){
+                        expression[k] = "@";
+                        expression[k+2] = "@";
+                    }
+                }
+            }
+            //Identifying arc()
+            if (expression[k-1].equals("a") && expression[k+1].equals("r")){
+                if (k+3 < arraySize){
+                    if (expression[k+3].equals("c")){
+                        expression[k] = "@";
+                        expression[k+2] = "@";
+                        expression[k+4] = "@";
+                    }
+                }
+            }
+            //Identifying sinh()
+            if (expression[k-1].equals("s") && expression[k+1].equals("i")){
+                if (k+5 < arraySize){
+                    if (expression[k+3].equals("n") && expression[k+5].equals("h")){
+                        expression[k] = "@";
+                        expression[k+2] = "@";
+                        expression[k+4] = "@";
+                    }
+                }
+            }
+            //Identifying cosh()
+            if (expression[k-1].equals("c") && expression[k+1].equals("o")){
+                if (k+5 < arraySize){
+                    if (expression[k+3].equals("s") && expression[k+5].equals("h")){
+                        expression[k] = "@";
+                        expression[k+2] = "@";
+                        expression[k+4] = "@";
+                    }
+                }
+            }
+            //Identifying tanh()
+            if (expression[k-1].equals("t") && expression[k+1].equals("a")){
+                if (k+5 < arraySize){
+                    if (expression[k+3].equals("n") && expression[k+5].equals("h")){
+                        expression[k] = "@";
+                        expression[k+2] = "@";
+                        expression[k+4] = "@";
+                    }
+                }
+            }
+            //Identifying sqrt()
+            if (expression[k-1].equals("s") && expression[k+1].equals("q")){
+                if (k+5 < arraySize){
+                    if (expression[k+3].equals("r") && expression[k+5].equals("t")){
+                        expression[k] = "@";
+                        expression[k+2] = "@";
+                        expression[k+4] = "@";
+                    }
                 }
             }
         }
-        if (!prev_isOperator){
-            size += 1;
+        
+        //Handling possible blank space at the end
+        //Special treatment to avoid index out of bound error
+        if (expression[arraySize-2].equals(" ")){
+            expression[arraySize-2] = "@";
         }
         
-        //Initialize infix array according to the size
-        infix = new String[size];
-        int indexInfix = -1;
-        int lastOperatorIndex = -1;
-        prev_isOperator = true;
+        //Rearrange the expression so that \\ and @ are removed
+        String[] tokenized = new String[input.length()];
         
-        //parse the expression
-        for (int j = 0; j < rawInput.length(); j++){
-            if (isOperator(rawInput.charAt(j))){
-                if (!prev_isOperator){
-                    infix[++indexInfix] = rawInput.substring(lastOperatorIndex + 1, j);
+        for (int i=0; i<input.length(); i++){
+            tokenized[i] = "";
+        }
+        
+        int index = 0;
+        for (int l=1; l<arraySize; l++){
+            if (!expression[l].equals("\\")){
+                if (!expression[l].equals("@")){
+                    tokenized[index] = tokenized[index] + expression[l];
                 }
-                infix[++indexInfix] = rawInput.substring(j, j+1);
-                prev_isOperator = true;
-                lastOperatorIndex = j;
             } else {
-                if (prev_isOperator){
-                    prev_isOperator = false;
-                }
+                index++;
             }
         }
-        if (!prev_isOperator){
-            infix[++indexInfix] = rawInput.substring(lastOperatorIndex + 1);
+        
+        //Clean up the wasted spaces at the end of the array
+        //by copying to a new array "infix" which is also the return value
+        int endIndex = tokenized.length;
+        for (int i=0; i<tokenized.length; i++){
+            if (tokenized[i].equals("")) {
+                endIndex = i;
+                break;
+            }
         }
         
-        return infix; 
+        String[] infix = new String[endIndex];
+        for (int i=0; i<endIndex; i++){
+            infix[i] = tokenized[i];
+        }
+        
+        return infix;
+    }
+    
+    public static boolean isNumber(String input){
+        if (input.charAt(0) >= 48 && input.charAt(0) <= 57){
+            return true;
+        } else {
+            return false;
+        }
     }
     
     public static String[] infixToPrefixConverter(String[] parsedInput){
@@ -247,13 +380,4 @@ public class Main {
         return result;
     }
     
-    public static void convertToTree(String[] prefixExpression, BinaryTree tree){
-        //Implementation
-    }
-    
-    public static double traverse(BinaryTree tree){
-        double result = 0;
-        //Implementation
-        return result;
-    }
 }
