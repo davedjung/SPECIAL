@@ -15,10 +15,13 @@ public class Main {
         
         String input = scan.nextLine();
         String[] parsedInput = expressionParser(input);
+        
+        
         String[] prefixExpression = infixToPrefixConverter(parsedInput);
         double result = evaluate(prefixExpression);
         
         System.out.println("Result is : " + result);
+        
     }
     
     public static String[] expressionParser(String input){
