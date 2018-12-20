@@ -12,15 +12,14 @@ public class Main {
         String input = scan.nextLine();
     
         while (!input.equals("exit")){
-            processCommand(input);
+            processExpression(input);
             input = scan.nextLine();
         }
         
-        processExpression(input);
     }
     
     static void processCommand(String input){
-        
+        //to be implemented
     }
     
     static void processExpression(String input){
