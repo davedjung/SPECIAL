@@ -7,10 +7,23 @@ public class Main {
         
         Scanner scan = new Scanner(System.in);
         System.out.println("Welcome to SPECIAL v0.1");
-        System.out.println("Expression : ");
-        String input = scan.nextLine();
-        System.out.println("Input readback : " + input);
+        System.out.println("Enter Command. Type in \"exit\" to terminate : ");
         
+        String input = scan.nextLine();
+    
+        while (!input.equals("exit")){
+            processCommand(input);
+            input = scan.nextLine();
+        }
+        
+        processExpression(input);
+    }
+    
+    static void processCommand(String input){
+        
+    }
+    
+    static void processExpression(String input){
         String[] parsed = parse(input);
         
         String[] prefix = toPrefix(parsed);
@@ -69,7 +82,7 @@ public class Main {
             thirdPass[0] = "-1";
         }
         for (int i=1; i<length; i++){
-            if (isNotOperator(thirdPass[i-1])){
+            if (isNotOperatorSpecial(thirdPass[i-1])){
                 if (thirdPass[i].equals("-")){
                     thirdPass[i] = "-1";
                 }
@@ -199,6 +212,11 @@ public class Main {
             if (input[i-1].equals(".")){
                 input[i-2] = "@";
                 input[i] = "@";
+            }
+            if (input[i-1].equals("e") || input[i-1].equals("E")){
+                if (input[i-2].equals("#") && input[i].equals("#")){
+                    input[i-1] = Double.toString(Math.E);
+                }
             }
         }
         return input;
@@ -367,6 +385,22 @@ public class Main {
         } else if (input.contains("sin") || input.contains("cos") || input.contains("tan")){
             return true;
         } else if (input.contains("exp") || input.contains("log") || input.contains("ln")){
+            return true;
+        } else if (input.equals("E") || input.equals("e") || input.equals("PI") || input.equals("Pi") || input.equals("pi")){
+            return true;
+        } else {
+            return false;
+        }
+    }
+    
+    static boolean isNotOperatorSpecial(String input){
+        if (input.equals("+") || input.equals("-") || input.equals("*") || input.equals("/") || input.equals("^")){
+            return true;
+        } else if (input.contains("sin") || input.contains("cos") || input.contains("tan")){
+            return true;
+        } else if (input.contains("exp") || input.contains("log") || input.contains("ln")){
+            return true;
+        } else if (input.equals("E") || input.equals("e") || input.equals("PI") || input.equals("Pi") || input.equals("pi")){
             return true;
         } else {
             return false;
