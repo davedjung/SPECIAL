@@ -222,7 +222,7 @@ public class Main {
         //digits
         for (int i=2; i<length; i++){
             if (!isNotOperator(input[i-2]) && !input[i-2].equals("#") && !input[i-2].equals("@")){
-                if (!isNotOperator(input[i]) && !input[i-2].equals("#") && !input[i-2].equals("@")){
+                if (!isNotOperator(input[i]) && !input[i].equals("#") && !input[i].equals("@")){
                     input[i-1] = "@";
                 }
             }
