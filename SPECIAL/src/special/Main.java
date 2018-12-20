@@ -221,8 +221,8 @@ public class Main {
         
         //digits
         for (int i=2; i<length; i++){
-            if (!isNotOperator(input[i-2]) && !input[i-2].equals("#") && !input[i-2].equals("@")){
-                if (!isNotOperator(input[i]) && !input[i].equals("#") && !input[i].equals("@")){
+            if (isNumber(input[i-2])){
+                if (isNumber(input[i])){
                     input[i-1] = "@";
                 }
             }
@@ -419,6 +419,14 @@ public class Main {
          if (input.equals("+") || input.equals("-") || input.equals("*") || input.equals("/") || input.equals("^")){
             return true;
         } else if (input.equals("(") || input.equals(")")){
+            return true;
+        } else {
+            return false;
+        }
+    }
+    
+    static boolean isNumber(String input){
+        if (input.charAt(0) >= 48 && input.charAt(0) <= 57){
             return true;
         } else {
             return false;
