@@ -3,33 +3,154 @@ import java.util.Scanner;
 
 public class Main {
 
+    public static Function[] list = new Function[100];
+    public static int listIndex = -1;
+    public static Function lastFunction;
+    public static double result;
+        
     public static void main(String[] args) {
         
         Scanner scan = new Scanner(System.in);
         System.out.println("Welcome to SPECIAL v0.1");
         System.out.println("Enter Command. Type in \"exit\" to terminate : ");
         
+        
+        
         String input = scan.nextLine();
     
         while (!input.equals("exit")){
-            processExpression(input);
+            processCommand(input);
             input = scan.nextLine();
         }
+        
+        System.exit(0);
         
     }
     
     static void processCommand(String input){
-        //to be implemented
+        input = input.toLowerCase();
+        input = " " + input + " ";
+        int index = 0;
+        if (input.contains("=")){
+            index = input.indexOf("=");
+            input = input.substring(0, index) + " = " + input.substring(index+1, input.length());
+        }
+        int length = input.length();
+        int count = 0;
+        String[] raw = new String[length];
+        for (int i=0; i<length; i++){
+            raw[i] = input.substring(i,i+1);
+            if (raw[i].equals(" ")){
+                raw[i] = "#";
+            }
+        }
+        for (int j=1; j<length; j++){
+            if (raw[j-1].equals("#") && raw[j].equals("#")){
+                raw[j-1] = "@";
+            }
+        }
+        for (int i=0; i<length; i++){
+            if (raw[i].equals("@")){
+                count++;
+            }
+        }
+        int tempLength = raw.length - count;
+        count = 0;
+        String[] firstPass = new String[tempLength];
+        for (int i=0; i<length; i++){
+            if (!raw[i].equals("@")){
+                firstPass[count++] = raw[i];
+            }
+        }
+        length = tempLength;
+        count = 0;
+        for (int i=0; i<length; i++){
+            if (firstPass[i].equals("#")){
+                count++;
+            }
+        }
+        tempLength = count - 1;
+        String[] secondPass = new String[tempLength];
+        for (int i=0; i<tempLength; i++){
+            secondPass[i] = "";
+        }
+        count = -1;
+        for (int i=0; i<length; i++){
+            if (firstPass[i].equals("#")){
+                count++;
+            } else {
+                secondPass[count] = secondPass[count] + firstPass[i];
+            }
+        }
+        length = tempLength;
+        
+        boolean definition = false, calculation = false, series = false;
+        index = -1;
+        for (int i=length-1; i>=0; i--){
+            if (secondPass[i].equals("define") || secondPass[i].equals("set") || secondPass[i].equals("let")){
+                definition = true;
+            }
+            if (secondPass[i].equals("solve") || secondPass[i].equals("evaluate") || secondPass[i].equals("calculate")){
+                calculation = true;
+            }
+            if (secondPass[i].equals("from") && secondPass[i].equals("to")){
+                series = true;
+            }
+            if (secondPass[i].equals("=")){
+                index = i;
+            }
+        }
+        
+        if (definition){
+            Function fn = new Function(secondPass[index-1].substring(0,1), secondPass[index-1].substring(2,3), secondPass[index+1]);
+            list[++listIndex] = fn;
+            lastFunction = fn;
+        }
+        if (calculation){
+            double x = 0;
+            int indexA, indexB;
+            String expression, var;
+            for (int i=0; i<length; i++){
+                if (secondPass[i].contains("(")){
+                    indexA = secondPass[i].indexOf("(");
+                    indexB = secondPass[i].indexOf(")");
+                    x = Double.valueOf(secondPass[i].substring(indexA+1, indexB));
+                    var = lastFunction.getVar();
+                    expression = lastFunction.getExpression();
+                    result = processExpression(expression, var, x);
+                    System.out.println(result);
+                }
+            }
+        }
+        
+        
     }
     
-    static void processExpression(String input){
+    static double processExpression(String input, String var, double value){
+                
+        String[] parsed = parse(input);
+        
+        for (int i=0; i<parsed.length; i++){
+            if (parsed[i].equals(var)){
+                parsed[i] = Double.toString(value);
+            }
+        }
+        
+        String[] prefix = toPrefix(parsed);
+        
+        double output = evaluate(prefix);
+        
+        return output;
+    }
+    
+    static double processExpression(String input){
         String[] parsed = parse(input);
         
         String[] prefix = toPrefix(parsed);
         
         double output = evaluate(prefix);
         
-        System.out.println(output);
+        return output;
     }
     
     static String[] parse(String input){
