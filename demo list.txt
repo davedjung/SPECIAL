@@ -1,0 +1,17 @@
+cos(2PI)
+sin(pi/2)
+10^-1
+5+-2
+exp(ln(E))-e
+ln(1-e)
+sin(exp(cos(ln(4.233-e)+pi/2)))-ln(ln(23))*-1.33^exp(2.112)
+
+define f(x)=x-x^2
+solve f(3)
+define a(n)=n
+what is the series sum of a(n) from 0 to 10
+define g(x)=x
+integrate g(x) from 0 to 2
+integrate from 1 to 3
+define f(y)=12y and integrate from -1 to 1
+define h(x)=sin(x)-cos(x) and solve h(2.3)
