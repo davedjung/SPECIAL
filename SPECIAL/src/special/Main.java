@@ -2,6 +2,9 @@ package special;
 import java.util.Scanner;
 import java.util.regex.*;
 
+import javax.swing.SwingUtilities;
+import javax.swing.UIManager;
+
 public class Main {
 
     public static Function[] list = new Function[100];
@@ -10,10 +13,11 @@ public class Main {
     public static double result;
         
     public static void main(String[] args) {
-        
+    	Graphics gui = new Graphics(); 	
+    	
         Scanner scan = new Scanner(System.in);
-        System.out.println("Welcome to SPECIAL v0.1");
-        System.out.println("Enter Command. Type in \"exit\" to terminate : ");
+        gui.getTexts("Welcome to SPECIAL v0.1");
+        gui.getTexts("Enter Command. Type in \"exit\" to terminate : ");
         
         
         
