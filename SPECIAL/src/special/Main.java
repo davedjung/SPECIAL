@@ -162,7 +162,7 @@ public class Main {
         }
         if (!definition && !calculation && !series && !integration){
             double result = processExpression(input);
-            System.out.format("%.4f", result);
+            System.out.format("%.4f\n", result);
         }
         
     }
