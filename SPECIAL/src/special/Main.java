@@ -1,5 +1,6 @@
 package special;
 import java.util.Scanner;
+import java.util.regex.*;
 
 public class Main {
 
@@ -84,7 +85,7 @@ public class Main {
         }
         length = tempLength;
         
-        boolean definition = false, calculation = false, series = false;
+        boolean definition = false, calculation = false, series = false, integration = false;
         index = -1;
         for (int i=length-1; i>=0; i--){
             if (secondPass[i].equals("define") || secondPass[i].equals("set") || secondPass[i].equals("let")){
@@ -93,8 +94,14 @@ public class Main {
             if (secondPass[i].equals("solve") || secondPass[i].equals("evaluate") || secondPass[i].equals("calculate")){
                 calculation = true;
             }
-            if (secondPass[i].equals("from") && secondPass[i].equals("to")){
+            if (secondPass[i].equals("from") || secondPass[i].equals("to")){
                 series = true;
+                calculation = false;
+            }
+            if (secondPass[i].equals("integrate")){
+                integration = true;
+                series = false;
+                calculation = false;
             }
             if (secondPass[i].equals("=")){
                 index = i;
@@ -111,18 +118,52 @@ public class Main {
             int indexA, indexB;
             String expression, var;
             for (int i=0; i<length; i++){
-                if (secondPass[i].contains("(")){
+                if (secondPass[i].contains("(") && stringContainsNumber(secondPass[i])){
                     indexA = secondPass[i].indexOf("(");
                     indexB = secondPass[i].indexOf(")");
                     x = Double.valueOf(secondPass[i].substring(indexA+1, indexB));
                     var = lastFunction.getVar();
                     expression = lastFunction.getExpression();
                     result = processExpression(expression, var, x);
-                    System.out.println(result);
+                    System.out.format("%.4f\n", result);
                 }
             }
         }
-        
+        if (series){
+            int indexA = 0, indexB = 0;
+            for (int i=0; i<length; i++){
+                if (secondPass[i].equals("from")){
+                    indexA = i + 1;
+                } else if (secondPass[i].equals("to")){
+                    indexB = i + 1;
+                }
+            }
+            result = 0;
+            for (int i=Integer.valueOf(secondPass[indexA]); i<=Integer.valueOf(secondPass[indexB]); i++){
+                result += processExpression(lastFunction.getExpression(), lastFunction.getVar(), i);
+            }
+            System.out.format("%.4f\n", result);
+        }
+        if (integration){
+            double step = 0.00001;
+            int indexA = 0, indexB = 0;
+            for (int i=0; i<length; i++){
+                if (secondPass[i].equals("from")){
+                    indexA = i + 1;
+                } else if (secondPass[i].equals("to")){
+                    indexB = i + 1;
+                }
+            }
+            result = 0;
+            for (double i=Integer.valueOf(secondPass[indexA]); i<=Integer.valueOf(secondPass[indexB]); i = i + step){
+                result += processExpression(lastFunction.getExpression(), lastFunction.getVar(), i) * step;
+            }
+            System.out.format("%.4f\n", result);
+        }
+        if (!definition && !calculation && !series && !integration){
+            double result = processExpression(input);
+            System.out.format("%.4f", result);
+        }
         
     }
     
@@ -554,4 +595,10 @@ public class Main {
         }
     }
     
+    public static boolean stringContainsNumber( String s ){
+        Pattern p = Pattern.compile( "[0-9]" );
+        Matcher m = p.matcher( s );
+
+        return m.find();
+    }
 }
